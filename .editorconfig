@@ -13,5 +13,5 @@ trim_trailing_whitespace = true
 [*.{md,txt,json,yml}]
 trim_trailing_whitespace = false
 
-[*.{json,yml}]
+[*.{json,yml,csv}]
 insert_final_newline = false

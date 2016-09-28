@@ -6,7 +6,9 @@ var cookieParser    = require('cookie-parser');
 var csrf            = require('csurf');
 var express         = require('express');
 var expressPDF      = require('express-pdf');
+var findInCSV       = require('find-in-csv');
 var fs              = require('fs');
+var isEmail         = require('isemail');
 var mustache        = require('mustache');
 var mustacheExpress = require('mustache-express');
 var path            = require('path');
@@ -41,17 +43,35 @@ app.get('/', csrfProtection, function (req, res) {
 
 app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (req, res) {
   var templatePath = path.resolve(__dirname, './views/pdf.html');
-  var args = {};
+  var csv          = new findInCSV(path.resolve(__dirname, './' + config.csv));
+  var email        = req.body.email;
+  var args         = {};
 
-  fs.readFile(templatePath, function (err, data) {
-    if (err) {
-      throw err;
+  // Validate email
+  if ('' === email) {
+    res.status(401).send('Missing email address!');
+  }
+  if (!isEmail.validate(email)) {
+    res.status(401).send('Invalid email address!');
+  }
+
+  csv.get({'email': email}, function (result) {
+    if (!result) {
+      res.status(404).send('The email address does not exists!');
     }
 
-    res.pdfFromHTML({
-      filename: 'certificate.pdf',
-      htmlContent: mustache.render(data.toString(), args)
-      // options: {...}
+    args.attendee = result;
+
+    fs.readFile(templatePath, function (err, data) {
+      if (err) {
+        throw err;
+      }
+
+      res.pdfFromHTML({
+        filename: config.routes.certificate + '.pdf',
+        htmlContent: mustache.render(data.toString(), args)
+        // options: {...}
+      });
     });
   });
 });

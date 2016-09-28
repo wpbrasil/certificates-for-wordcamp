@@ -7,3 +7,4 @@ site:
     submit: "Generate my certificate"
 routes:
   certificate: certificate
+csv: csv/sample.csv
