@@ -1,3 +1,9 @@
 site:
-  title: "Some Title"
-  message: "Some message"
+  lang: "en"
+  index:
+    title: "Certificates for WordCamp São Paulo 2016"
+    message: "Instructions here"
+    emailPlaceholder: "myemail@email.com"
+    submit: "Generate my certificate"
+routes:
+  certificate: certificate

@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{lang}}">
 <head>
   <meta charset="UTF-8">
   <title>{{title}}</title>
 </head>
 <body>
   <p>{{message}}</p>
+
+  <form action="/{{formAction}}" method="POST">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+    <input type="text" name="email" placeholder="{{emailPlaceholder}}" />
+    <button type="submit">{{submit}}</button>
+  </form>
 </body>
 </html>

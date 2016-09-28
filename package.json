@@ -13,7 +13,10 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "config-yml": "^0.6.1",
+    "cookie-parser": "^1.4.3",
+    "csurf": "^1.9.0",
     "express-pdf": "^1.2.2",
     "mustache-express": "^1.2.2"
   },
