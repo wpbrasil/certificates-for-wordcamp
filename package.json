@@ -1,0 +1,21 @@
+{
+  "name": "certificates-for-wordcamp",
+  "description": "Certificates generator for WordCamps",
+  "version": "1.4.1",
+  "author": "Claudio Sanches",
+  "keywords": [
+    "wordcamp",
+    "certificates"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "config-yml": "^0.6.1",
+    "express-pdf": "^1.2.2",
+    "mustache-express": "^1.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:wpbrasil/certificates-for-wordcamp.git"
+  }
+}
