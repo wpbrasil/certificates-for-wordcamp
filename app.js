@@ -14,7 +14,8 @@ var mustacheExpress = require('mustache-express');
 var path            = require('path');
 
 // Setup app
-var app = express();
+var app  = express();
+var port = parseInt(process.env.PORT, 10) || 3000;
 
 // Setup route middlewares
 var csrfProtection = csrf({ cookie: true })
@@ -90,6 +91,6 @@ app.use(function (err, req, res, next) {
   res.send('ERROR MESSAGE HERE');
 })
 
-app.listen(3000, function () {
-  console.log('Site running on port 3000!');
+app.listen(port, function () {
+  console.log('Site running on port ' + port + '!');
 });
