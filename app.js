@@ -62,6 +62,10 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
 
     args.attendee = result;
 
+    if ('Yes' !== args.attendee.attendance) {
+      res.status(401).send('You did not attended to this WordCamp!');
+    }
+
     fs.readFile(templatePath, function (err, data) {
       if (err) {
         throw err;
