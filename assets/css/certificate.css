@@ -1,0 +1,36 @@
+@page {
+  size: A4 landscape;
+}
+
+html {
+	width: 297mm;
+	height: 210mm;
+	margin: 20px auto;
+	border: 1px solid rgba(128,128,128,0.4);
+}
+
+body {
+	width: 297mm;
+	height: 210mm;
+	margin: 0;
+	box-sizing: border-box;
+	background: #eee url("../images/background.png") center no-repeat;
+	padding: 2cm;
+	text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+}
+
+.content {
+	position: relative;
+	top: 40%;
+	transform: translateY(-50%);
+}
+
+h1 {
+	margin-bottom: 2cm;
+}
+
+p {
+	padding: 0 10%;
+}
