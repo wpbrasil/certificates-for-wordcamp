@@ -32,6 +32,9 @@ app.use(expressPDF);
 // Parse cookies
 app.use(cookieParser());
 
+// Set static files.
+app.use('/static', express.static(__dirname + '/assets'));
+
 // Routes
 app.get('/', csrfProtection, function (req, res) {
   var args        = config.site.index;
