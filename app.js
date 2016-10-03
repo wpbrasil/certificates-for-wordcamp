@@ -41,6 +41,7 @@ app.get('/', csrfProtection, function (req, res) {
   args.lang       = config.site.lang;
   args.csrfToken  = req.csrfToken();
   args.formAction = config.routes.certificate;
+  args.event      = config.event;
 
   res.render('index', args);
 });
@@ -51,8 +52,9 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
   var email        = req.body.email;
   var base_url     = req.protocol + '://' + req.get('host');
   var args         = {
-    base_url: base_url,
-    logo: config.certificate.logo
+    base_url    : base_url,
+    certificate : config.certificate,
+    event       : config.event
   };
 
   // Validate email
@@ -68,6 +70,7 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
       res.status(404).send('The email address does not exists!');
     }
 
+    // Set attendee args
     args.attendee = result;
 
     if ('Yes' !== args.attendee.attendance) {
@@ -79,6 +82,14 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
         throw err;
       }
 
+      // Style certificate args
+      args.certificate.textLine2 = args.certificate.textLine2
+        .replace('%event_name%', '<strong>' + args.event.name + '</strong>')
+        .replace('%event_date%', args.event.date)
+        .replace('%attendee_type%', '<strong>' + args.attendee.type.toLowerCase() + '</strong>')
+        .replace('%event_duration%', '<strong>' + args.event.duration + '</strong>');
+
+      // Render PDF
       res.pdfFromHTML({
         filename: config.routes.certificate + '.pdf',
         htmlContent: mustache.render(data.toString(), args),

@@ -1,7 +1,10 @@
+event:
+  name: "WordCamp São Paulo 2016"
+  date: "December 10, 2016"
+  duration: "8 hours"
 site:
   lang: "en"
   index:
-    event_name: "WordCamp São Paulo 2016"
     title: "Certificates for WordCamp São Paulo 2016"
     message: "Instructions here"
     emailPlaceholder: "myemail@email.com"
@@ -9,6 +12,9 @@ site:
     logo: "static/images/logo.png"
 certificate:
   logo: "static/images/logo.png"
+  background: "static/images/background.png"
+  textLine1: Declaramos para os devidos fins que
+  textLine2: Participou do evento %event_name%, no dia %event_date%, na qualidade de %attendee_type%, cumprindo uma carga horária total de %event_duration%.
 routes:
   certificate: certificate
 csv: csv/sample.csv
