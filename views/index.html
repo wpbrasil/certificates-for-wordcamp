@@ -13,7 +13,7 @@
 			<p>{{message}}</p>
 		</div>
     {{#error}}
-      <p class="error">{{error}}</p>
+      <p class="error"><b>Error:</b> {{error}}</p>
     {{/error}}
 		<form action="/{{formAction}}" method="POST" class="form-certificate">
 			<input type="hidden" name="_csrf" value="{{csrfToken}}" />
