@@ -36,12 +36,18 @@ app.use(cookieParser());
 app.use('/static', express.static(__dirname + '/assets'));
 
 // Routes
-app.get('/', csrfProtection, function (req, res) {
+function getIndexArgs() {
   var args        = config.site.index;
   args.lang       = config.site.lang;
-  args.csrfToken  = req.csrfToken();
   args.formAction = config.routes.certificate;
   args.event      = config.event;
+
+  return args;
+}
+
+app.get('/', csrfProtection, function (req, res) {
+  var args       = getIndexArgs();
+  args.csrfToken = req.csrfToken();
 
   res.render('index', args);
 });
@@ -50,58 +56,66 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
   var templatePath = path.resolve(__dirname, './views/pdf.html');
   var csv          = new findInCSV(path.resolve(__dirname, './' + config.csv));
   var email        = req.body.email;
-  var base_url     = req.protocol + '://' + req.get('host');
   var args         = {
-    base_url    : base_url,
+    base_url    : req.protocol + '://' + req.get('host'),
     certificate : config.certificate,
     event       : config.event
   };
 
-  // Validate email
-  if ('' === email) {
-    res.status(401).send('Missing email address!');
-  }
-  if (!isEmail.validate(email)) {
-    res.status(401).send('Invalid email address!');
-  }
-
-  csv.get({'email': email}, function (result) {
-    if (!result) {
-      res.status(404).send('The email address does not exists!');
+  try {
+    // Validate email
+    if ('' === email) {
+      throw config.errors.missingEmail;
+    }
+    if (!isEmail.validate(email)) {
+      throw config.errors.invalidEmail;
     }
 
-    // Set attendee args
-    args.attendee = result;
-
-    if ('Yes' !== args.attendee.attendance) {
-      res.status(401).send('You did not attended to this WordCamp!');
-    }
-
-    fs.readFile(templatePath, function (err, data) {
-      if (err) {
-        throw err;
+    csv.get({'email': email}, function (result) {
+      if (!result) {
+        throw config.errors.emailNoExists;
       }
 
-      // Style certificate args
-      args.certificate.textLine2 = args.certificate.textLine2
-        .replace('%event_name%', '<strong>' + args.event.name + '</strong>')
-        .replace('%event_date%', args.event.date)
-        .replace('%attendee_type%', '<strong>' + args.attendee.type.toLowerCase() + '</strong>')
-        .replace('%event_duration%', '<strong>' + args.event.duration + '</strong>');
+      // Set attendee args
+      args.attendee = result;
 
-      // Render PDF
-      res.pdfFromHTML({
-        filename: config.routes.certificate + '.pdf',
-        htmlContent: mustache.render(data.toString(), args),
-        options: {
-          // File options
-          "type": "pdf",              // allowed file types: png, jpeg, pdf
-          "format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
-          "orientation": "landscape", // portrait or landscape
+      if ('Yes' !== args.attendee.attendance) {
+        throw config.errors.notAttended;
+      }
+
+      fs.readFile(templatePath, function (err, data) {
+        if (err) {
+          console.log(err);
+          throw config.errors.csvError;
         }
+
+        // Style certificate args
+        args.certificate.textLine2 = args.certificate.textLine2
+          .replace('%event_name%', '<strong>' + args.event.name + '</strong>')
+          .replace('%event_date%', args.event.date)
+          .replace('%attendee_type%', '<strong>' + args.attendee.type.toLowerCase() + '</strong>')
+          .replace('%event_duration%', '<strong>' + args.event.duration + '</strong>');
+
+        // Render PDF
+        res.pdfFromHTML({
+          filename: config.routes.certificate + '.pdf',
+          htmlContent: mustache.render(data.toString(), args),
+          options: {
+            // File options
+            "type": "pdf",              // allowed file types: png, jpeg, pdf
+            "format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+            "orientation": "landscape", // portrait or landscape
+          }
+        });
       });
     });
-  });
+  } catch(err) {
+    var index       = getIndexArgs();
+    index.csrfToken = req.csrfToken();
+    index.error     = err;
+
+    res.render('index', index);
+  }
 });
 
 app.use(function (err, req, res, next) {
@@ -111,8 +125,8 @@ app.use(function (err, req, res, next) {
 
   // Handle CSRF token errors here
   res.status(403);
-  res.send('ERROR MESSAGE HERE');
-})
+  res.send(config.errors.csrfError);
+});
 
 app.listen(port, function () {
   console.log('Site running on port ' + port + '!');

@@ -17,4 +17,11 @@ certificate:
   textLine2: Participou do evento %event_name%, no dia %event_date%, na qualidade de %attendee_type%, cumprindo uma carga horária total de %event_duration%.
 routes:
   certificate: certificate
+errors:
+  missingEmail: "Missing email address!"
+  invalidEmail: "Invalid email address!"
+  emailNoExists: "The email address does not exists!"
+  notAttended: "You did not attended to this WordCamp!"
+  csvError: "An error occurred while reading the CSV file!"
+  csrfError: "Cheatin&#8217; huh?"
 csv: csv/sample.csv
