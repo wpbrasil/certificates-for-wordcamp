@@ -1,10 +1,14 @@
 site:
   lang: "en"
   index:
+    event_name: "WordCamp São Paulo 2016"
     title: "Certificates for WordCamp São Paulo 2016"
     message: "Instructions here"
     emailPlaceholder: "myemail@email.com"
-    submit: "Generate my certificate"
+    submit: "Generate"
+    logo: "static/images/logo.png"
+certificate:
+  logo: "static/images/logo.png"
 routes:
   certificate: certificate
 csv: csv/sample.csv
