@@ -49,7 +49,11 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
   var templatePath = path.resolve(__dirname, './views/pdf.html');
   var csv          = new findInCSV(path.resolve(__dirname, './' + config.csv));
   var email        = req.body.email;
-  var args         = {};
+  var base_url     = req.protocol + '://' + req.get('host');
+  var args         = {
+    base_url: base_url,
+    logo: config.certificate.logo
+  };
 
   // Validate email
   if ('' === email) {
@@ -77,8 +81,13 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
 
       res.pdfFromHTML({
         filename: config.routes.certificate + '.pdf',
-        htmlContent: mustache.render(data.toString(), args)
-        // options: {...}
+        htmlContent: mustache.render(data.toString(), args),
+        options: {
+          // File options
+          "type": "pdf",              // allowed file types: png, jpeg, pdf
+          "format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
+          "orientation": "landscape", // portrait or landscape
+        }
       });
     });
   });
