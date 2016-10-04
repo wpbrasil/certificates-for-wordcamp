@@ -36,17 +36,20 @@ app.use(cookieParser());
 app.use('/static', express.static(__dirname + '/assets'));
 
 // Routes
-function getIndexArgs() {
+app.get('/', csrfProtection, function (req, res) {
+  var error       = req.query.error;
   var args        = config.site;
   args.event      = config.event;
   args.formAction = config.routes.certificate;
+  args.csrfToken  = req.csrfToken();
 
-  return args;
-}
+  if (typeof error !== 'undefined') {
+    var err = error.replace(/<(?:.|\n|)*?>|\./gm, '');
 
-app.get('/', csrfProtection, function (req, res) {
-  var args       = getIndexArgs();
-  args.csrfToken = req.csrfToken();
+    if (config.errors[err]) {
+      args.error = config.errors[err];
+    }
+  }
 
   res.render('index', args);
 });
@@ -61,65 +64,57 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
     event       : config.event
   };
 
+  // Validate email
   try {
-    // Validate email
     if ('' === email) {
-      throw config.errors.missingEmail;
+      throw "missingEmail";
     }
     if (!isEmail.validate(email)) {
-      throw config.errors.invalidEmail;
+      throw "invalidEmail";
+    }
+  } catch(e) {
+    res.redirect('/?error=' + e);
+  }
+
+  // Find email in CSV
+  csv.get({'email': email}, function (result) {
+    if (!result) {
+      res.redirect('/?error=emailNoExists');
     }
 
-    csv.get({'email': email}, function (result) {
-      if (!result) {
-        throw config.errors.emailNoExists;
+    // Set attendee args
+    args.attendee = result;
+
+    if ('Yes' !== args.attendee.attendance) {
+      res.redirect('/?error=notAttended');
+    }
+
+    fs.readFile(templatePath, function (err, data) {
+      if (err) {
+        console.log(err);
+        res.redirect('/?error=csvError');
       }
 
-      // Set attendee args
-      args.attendee = result;
+      // Style certificate args
+      args.certificate.textLine2 = args.certificate.textLine2
+        .replace('%event_name%', '<strong>' + args.event.name + '</strong>')
+        .replace('%event_date%', args.event.date)
+        .replace('%attendee_type%', '<strong>' + args.attendee.type.toLowerCase() + '</strong>')
+        .replace('%event_duration%', '<strong>' + args.event.duration + '</strong>');
 
-      if ('Yes' !== args.attendee.attendance) {
-        throw config.errors.notAttended;
-      }
-
-      fs.readFile(templatePath, function (err, data) {
-        if (err) {
-          console.log(err);
-          throw config.errors.csvError;
+      // Render PDF
+      res.pdfFromHTML({
+        filename: config.routes.certificate + '.pdf',
+        htmlContent: mustache.render(data.toString(), args),
+        options: {
+          // File options
+          "type": "pdf",              // Allowed file types: png, jpeg, pdf
+          "format": "A4",             // Allowed units: A3, A4, A5, Legal, Letter, Tabloid
+          "orientation": "landscape", // Portrait or landscape
         }
-
-        // Style certificate args
-        args.certificate.textLine2 = args.certificate.textLine2
-          .replace('%event_name%', '<strong>' + args.event.name + '</strong>')
-          .replace('%event_date%', args.event.date)
-          .replace('%attendee_type%', '<strong>' + args.attendee.type.toLowerCase() + '</strong>')
-          .replace('%event_duration%', '<strong>' + args.event.duration + '</strong>');
-
-        // Render PDF
-        res.pdfFromHTML({
-          filename: config.routes.certificate + '.pdf',
-          htmlContent: mustache.render(data.toString(), args),
-          options: {
-            // File options
-            "type": "pdf",              // Allowed file types: png, jpeg, pdf
-            "format": "A4",             // Allowed units: A3, A4, A5, Legal, Letter, Tabloid
-            "orientation": "landscape", // Portrait or landscape
-          }
-        });
       });
     });
-  } catch(e) {
-    var index       = getIndexArgs();
-    index.csrfToken = req.csrfToken();
-    index.error     = e;
-
-    // Handle CSRF token errors
-    if (e instanceof TypeError) {
-      index.error = config.errors.csrfError;
-    }
-
-    res.render('index', index);
-  }
+  });
 });
 
 // Handle 404
@@ -132,8 +127,22 @@ app.use(function (req, res) {
   res.render('error', args);
 });
 
+// Handle CSRF token errors
+app.use(function (err, req, res, next) {
+  if (err.code !== 'EBADCSRFTOKEN') {
+    return next(err);
+  }
+
+  var args     = config.site;
+  args.event   = config.event;
+  args.message = config.errors.csrfError;
+
+  res.status(403);
+  res.render('error', args);
+});
+
 // Handle 500
-app.use(function (error, req, res) {
+app.use(function (err, req, res) {
   var args     = config.site;
   args.event   = config.event;
   args.message = config.errors.error500;

@@ -17,7 +17,7 @@
     {{/error}}
     <form action="/{{formAction}}" method="POST" class="form-certificate">
       <input type="hidden" name="_csrf" value="{{csrfToken}}" />
-      <input type="email" name="email" placeholder="{{index.emailPlaceholder}}" />
+      <input type="email" name="email" placeholder="{{index.emailPlaceholder}}" required="required" />
       <button type="submit">{{index.submit}}</button>
     </form>
   </main>
