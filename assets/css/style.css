@@ -39,6 +39,15 @@ body {
   padding: 10px;
 }
 
+.error {
+	display: table;
+	margin: 10px auto;
+  padding: 10px;
+  border-radius: 3px 3px 3px 3px;
+  color: #D8000C;
+  background-color: #FFBABA;
+}
+
 /**
  * Form Input
  */
