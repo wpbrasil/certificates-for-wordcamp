@@ -37,10 +37,9 @@ app.use('/static', express.static(__dirname + '/assets'));
 
 // Routes
 function getIndexArgs() {
-  var args        = config.site.index;
-  args.lang       = config.site.lang;
-  args.formAction = config.routes.certificate;
+  var args        = config.site;
   args.event      = config.event;
+  args.formAction = config.routes.certificate;
 
   return args;
 }
@@ -109,23 +108,38 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
         });
       });
     });
-  } catch(err) {
+  } catch(e) {
     var index       = getIndexArgs();
     index.csrfToken = req.csrfToken();
-    index.error     = err;
+    index.error     = e;
+
+    // Handle CSRF token errors
+    if (e instanceof TypeError) {
+      index.error = config.errors.csrfError;
+    }
 
     res.render('index', index);
   }
 });
 
-app.use(function (err, req, res, next) {
-  if (err.code !== 'EBADCSRFTOKEN') {
-    return next(err);
-  }
+// Handle 404
+app.use(function(req, res) {
+  var args     = config.site;
+  args.event   = config.event;
+  args.message = config.errors.error404;
 
-  // Handle CSRF token errors here
-  res.status(403);
-  res.send(config.errors.csrfError);
+  res.status(400);
+  res.render('error', args);
+});
+
+// Handle 500
+app.use(function(error, req, res) {
+  var args     = config.site;
+  args.event   = config.event;
+  args.message = config.errors.error500;
+
+  res.status(500);
+  res.render('error', args);
 });
 
 app.listen(port, function () {

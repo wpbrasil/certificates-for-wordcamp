@@ -4,12 +4,12 @@ event:
   duration: "8 hours"
 site:
   lang: "en"
+  title: "Certificates for WordCamp São Paulo 2016"
+  logo: "static/images/logo.png"
   index:
-    title: "Certificates for WordCamp São Paulo 2016"
     message: "Instructions here"
     emailPlaceholder: "myemail@email.com"
     submit: "Generate"
-    logo: "static/images/logo.png"
 certificate:
   logo: "static/images/logo.png"
   background: "static/images/background.png"
@@ -18,10 +18,13 @@ certificate:
 routes:
   certificate: certificate
 errors:
+  error: "<strong>Error:</strong> %message%"
   missingEmail: "Missing email address!"
   invalidEmail: "Invalid email address!"
   emailNoExists: "The email address does not exists!"
   notAttended: "You did not attended to this WordCamp!"
   csvError: "An error occurred while reading the CSV file!"
-  csrfError: "Cheatin&#8217; huh?"
+  csrfError: "Cheatin' huh?"
+  error404: "404: Page not Found"
+  error500: "500: Internal Server Error"
 csv: csv/sample.csv

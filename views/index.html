@@ -7,19 +7,19 @@
   <link rel="stylesheet" type="text/css" href="static/css/style.css" />
 </head>
 <body>
-	<main class="content">
-		<img src="{{{logo}}}" class="logo-wordcamp" alt="{{event.name}}" />
-		<div class="instructions">
-			<p>{{message}}</p>
-		</div>
+  <main class="content">
+    <img src="{{{logo}}}" class="logo-wordcamp" alt="{{event.name}}" />
+    <div class="instructions">
+      <p>{{index.message}}</p>
+    </div>
     {{#error}}
-      <p class="error"><b>Error:</b> {{error}}</p>
+      <p class="error">{{error}}</p>
     {{/error}}
-		<form action="/{{formAction}}" method="POST" class="form-certificate">
-			<input type="hidden" name="_csrf" value="{{csrfToken}}" />
-			<input type="email" name="email" placeholder="{{emailPlaceholder}}" />
-			<button type="submit">{{submit}}</button>
-		</form>
-	</main>
+    <form action="/{{formAction}}" method="POST" class="form-certificate">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+      <input type="email" name="email" placeholder="{{index.emailPlaceholder}}" />
+      <button type="submit">{{index.submit}}</button>
+    </form>
+  </main>
 </body>
 </html>
