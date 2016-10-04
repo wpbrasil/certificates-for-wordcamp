@@ -101,9 +101,9 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
           htmlContent: mustache.render(data.toString(), args),
           options: {
             // File options
-            "type": "pdf",              // allowed file types: png, jpeg, pdf
-            "format": "A4",             // allowed units: A3, A4, A5, Legal, Letter, Tabloid
-            "orientation": "landscape", // portrait or landscape
+            "type": "pdf",              // Allowed file types: png, jpeg, pdf
+            "format": "A4",             // Allowed units: A3, A4, A5, Legal, Letter, Tabloid
+            "orientation": "landscape", // Portrait or landscape
           }
         });
       });
@@ -123,7 +123,7 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
 });
 
 // Handle 404
-app.use(function(req, res) {
+app.use(function (req, res) {
   var args     = config.site;
   args.event   = config.event;
   args.message = config.errors.error404;
@@ -133,7 +133,7 @@ app.use(function(req, res) {
 });
 
 // Handle 500
-app.use(function(error, req, res) {
+app.use(function (error, req, res) {
   var args     = config.site;
   args.event   = config.event;
   args.message = config.errors.error500;
