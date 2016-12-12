@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>{{event.name}}</title>
-  <link rel="stylesheet" type="text/css" href="{{{base_url}}}/static/css/certificate.css" />
+  <link rel="stylesheet" type="text/css" href="{{{baseUrl}}}/static/css/certificate.css" />
   <style>
     body {
-      background-image: url("{{{base_url}}}/{{{certificate.background}}}");
+      background-image: url("{{{baseUrl}}}/{{{certificate.background}}}");
     }
   </style>
 </head>
 
 <body>
   <div class="content">
-    {{#certificate.logo}}<img class="logo-wordcamp" src="{{{base_url}}}/{{{certificate.logo}}}" alt="{{event.name}}" />{{/certificate.logo}}
+    {{#certificate.logo}}<img class="logo-wordcamp" src="{{{baseUrl}}}/{{{certificate.logo}}}" alt="{{event.name}}" />{{/certificate.logo}}
 
     <div class="inner-content">
       <p>{{{certificate.textLine1}}}</p>

@@ -18,8 +18,8 @@ var app  = express();
 var port = parseInt(process.env.PORT, 10) || 3000;
 
 // Setup route middlewares
-var csrfProtection = csrf({ cookie: true })
-var parseForm = bodyParser.urlencoded({ extended: false })
+var csrfProtection = csrf({ cookie: true });
+var parseForm = bodyParser.urlencoded({ extended: false });
 
 // Setup Mustache in Express
 app.engine('html', mustacheExpress());
@@ -37,6 +37,7 @@ app.use('/static', express.static(__dirname + '/assets'));
 
 // Routes
 app.get('/', csrfProtection, function (req, res) {
+  var err         = null;
   var error       = req.query.error;
   var args        = config.site;
   args.event      = config.event;
@@ -44,11 +45,15 @@ app.get('/', csrfProtection, function (req, res) {
   args.csrfToken  = req.csrfToken();
 
   if (typeof error !== 'undefined') {
-    var err = error.replace(/<(?:.|\n|)*?>|\./gm, '');
+    err = error.replace(/<(?:.|\n|)*?>|\./gm, '');
 
     if (config.errors[err]) {
       args.error = config.errors[err];
     }
+  }
+  // Clean any cached error.
+  if (null === err) {
+    args.error = '';
   }
 
   res.render('index', args);
@@ -59,7 +64,7 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
   var csv          = new findInCSV(path.resolve(__dirname, './' + config.csv));
   var email        = req.body.email;
   var args         = {
-    base_url    : req.protocol + '://' + req.get('host'),
+    baseUrl     : req.protocol + '://' + req.get('host'),
     certificate : config.certificate,
     event       : config.event
   };
@@ -67,10 +72,10 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
   // Validate email
   try {
     if ('' === email) {
-      throw "missingEmail";
+      throw 'missingEmail';
     }
     if (!isEmail.validate(email)) {
-      throw "invalidEmail";
+      throw 'invalidEmail';
     }
   } catch(e) {
     res.redirect('/?error=' + e);
@@ -108,9 +113,9 @@ app.post('/' + config.routes.certificate, parseForm, csrfProtection, function (r
         htmlContent: mustache.render(data.toString(), args),
         options: {
           // File options
-          "type": "pdf",              // Allowed file types: png, jpeg, pdf
-          "format": "A4",             // Allowed units: A3, A4, A5, Legal, Letter, Tabloid
-          "orientation": "landscape", // Portrait or landscape
+          'type': 'pdf',              // Allowed file types: png, jpeg, pdf
+          'format': 'A4',             // Allowed units: A3, A4, A5, Legal, Letter, Tabloid
+          'orientation': 'landscape', // Portrait or landscape
         }
       });
     });
