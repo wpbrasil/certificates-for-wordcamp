@@ -57,6 +57,11 @@ a:hover {
   padding: 10px;
 }
 
+.site-info {
+  font-size: .6em;
+  text-align: center;
+}
+
 /**
  * Form Input.
  */

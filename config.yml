@@ -1,5 +1,6 @@
 event:
   name: "WordCamp São Paulo 2016"
+  url: "http://2016.saopaulo.wordcamp.org/"
   date: "December 10, 2016"
   duration: "8 hours"
 site:
