@@ -9,6 +9,7 @@ site:
   index:
     message: "Instructions here"
     emailPlaceholder: "my@email.com"
+    inputLabel: "Email"
     submit: "Generate"
 certificate:
   logo: "static/images/logo.png"
