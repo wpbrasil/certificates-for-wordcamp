@@ -10,10 +10,10 @@
   <main class="content">
     <img src="{{{logo}}}" class="logo-wordcamp" alt="{{event.name}}" />
     <div class="instructions">
-      <p>{{index.message}}</p>
+      <p>{{{index.message}}}</p>
     </div>
     {{#error}}
-      <p class="error">{{error}}</p>
+      <p class="error">{{{error}}}</p>
     {{/error}}
     <form action="/{{formAction}}" method="POST" class="form-certificate">
       <input type="hidden" name="_csrf" value="{{csrfToken}}" />
