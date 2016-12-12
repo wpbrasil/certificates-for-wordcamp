@@ -26,9 +26,9 @@ body {
 .inner-content {
   display: table-cell;
   left: 50%;
+  min-width: 80%;
   position: fixed;
   top: 50%;
-  min-width: 80%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
@@ -38,6 +38,6 @@ h1 {
 }
 
 p {
-  padding: 0 10%;
   margin: 0.5cm 0;
+  padding: 0 10%;
 }

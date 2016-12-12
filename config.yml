@@ -8,7 +8,7 @@ site:
   logo: "static/images/logo.png"
   index:
     message: "Instructions here"
-    emailPlaceholder: "myemail@email.com"
+    emailPlaceholder: "my@email.com"
     submit: "Generate"
 certificate:
   logo: "static/images/logo.png"
